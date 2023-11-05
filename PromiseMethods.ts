@@ -8,40 +8,67 @@ const PROMISE3 = new Promise<string>((resolve, reject) => {
   setTimeout(() => resolve("Third Promise Resolved"), 1000);
 });
 
-console.time("A");
-
 const PROMISEARRAY = [PROMISE1, PROMISE2, PROMISE3];
+
+const isArrayEmpty = <T>(array: Promise<T>[]) => {
+  if (!array.length) {
+    throw new Error("Please type an array with at least one promise");
+  }
+};
 
 // Develop a function promise.all(arrayOfPromises).
 
-const promiseAll = (
-  arrayOfPromises: Promise<string>[]
-): Promise<string[] | void> => {
+const promiseAll = <T>(arrayOfPromises: Promise<T>[]): Promise<T[] | void> => {
+  isArrayEmpty(arrayOfPromises);
   return new Promise((resolve, reject) => {
-    const arr = [] as string[];
-    arrayOfPromises.forEach((element) => {
+    const arr = [] as T[];
+    arrayOfPromises.map((element) => {
+      element
+        .then((value) => {
+          arr.push(value);
+          resolve(arr);
+        })
+        .catch((error) => {
+          reject(error);
+          //   throw error
+        });
+    });
+  });
+};
+
+// const promiseAllResult = promiseAll(PROMISEARRAY);
+// console.log(promiseAllResult);
+
+// setTimeout(() => console.log(promiseAllResult), 4000);
+
+const promiseAllArrayFrom = <T>(
+  arrayOfPromises: Promise<T>[]
+): Promise<T[] | void> => {
+  isArrayEmpty(arrayOfPromises);
+  return new Promise((resolve, reject) => {
+    const arr = [] as T[];
+    Array.from(arrayOfPromises, (element) => {
       element
         .then((value) => arr.push(value))
         .catch((error) => {
-          throw error;
+          reject(error);
         });
     });
     resolve(arr);
   });
 };
 
-const promiseAllResult = promiseAll(PROMISEARRAY);
-console.log(promiseAllResult);
+// const promiseAllArrayFromResult = promiseAllArrayFrom(PROMISEARRAY);
+// console.log(promiseAllArrayFromResult);
 
-setTimeout(() => console.log(promiseAllResult), 4000);
+// setTimeout(() => console.log(promiseAllArrayFromResult), 4000);
 
 // Develop a function promise.race(arrayOfPromises).
 
-const promiseRace = (
-  arrayOfPromises: Promise<string>[]
-): Promise<string | void> => {
+const promiseRace = <T>(arrayOfPromises: Promise<T>[]): Promise<T | void> => {
+  isArrayEmpty(arrayOfPromises);
   return new Promise((resolve, reject) => {
-    arrayOfPromises.forEach((element) => {
+    arrayOfPromises.map((element) => {
       element
         .then((value) => resolve(value))
         .catch((error) => {
@@ -51,12 +78,54 @@ const promiseRace = (
   });
 };
 
-const promiseRaceResult = promiseRace(PROMISEARRAY);
-console.log(promiseRaceResult);
+// const promiseRaceResult = promiseRace(PROMISEARRAY);
+// console.log(promiseRaceResult);
 
-setTimeout(() => console.log(promiseRaceResult), 4000);
+// setTimeout(() => console.log(promiseRaceResult), 4000);
 
 // Develop a function promise.last(arrayOfPromises).
+
+const promiseAllArr = <T>(arrayOfPromises: Promise<T>[]): Promise<T[]> => {
+  isArrayEmpty(arrayOfPromises);
+  const arr = [] as T[];
+  return new Promise((resolve, reject) => {
+    arrayOfPromises.forEach((element) => {
+      element
+        .then((value) => {
+          arr.push(value);
+        })
+        .catch((error) => reject(error));
+    });
+    resolve(arr);
+  });
+};
+
+async function promiseLastAsync() {
+  const result = await promiseAllArr(PROMISEARRAY);
+  console.log(result[result.length - 1]);
+}
+
+setTimeout(() => {
+  promiseLastAsync();
+  promiseAllArr(PROMISEARRAY).then((results) => {
+    console.log(results[results.length - 1] + " from PROMISES");
+  });
+}, 4000);
+
+//   const arr = [] as T[];
+//     Array.from(arrayOfPromises, (element) => {
+//       element
+//         .then((value) => arr.push(value))
+//         .catch((error) => {
+//           reject(error);
+//         });
+//     });
+//     resolve(arr);
+
+// promiseLast(PROMISEARRAY);
+
+// setTimeout(() => console.log(promiseLastResult), 4000);
+
 // Develop a function promise.ignoreErrors(arrayOfPromises).
 // Develop a function promise.allSettled(arrayOfPromises).
 
