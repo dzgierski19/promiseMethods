@@ -17,10 +17,14 @@ const promiseAllArr = <T>(arrayOfPromises: Promise<T>[]): Promise<T[]> => {
   // });
   return new Promise((resolve, reject) => {
     for (let i = 0; i < arrayOfPromises.length; i++) {
-      arrayOfPromises[i].then((value) => {
-        arr.push(value);
-        resolve(arr);
-      });
+      arrayOfPromises[i]
+        .then((value) => {
+          arr.push(value);
+          resolve(arr);
+        })
+        .catch((error) => {
+          throw error;
+        });
     }
   });
 };
@@ -50,3 +54,5 @@ setTimeout(() => {
     console.log(data);
   });
 }, 6000);
+
+//In Promise.all the order of the promises is maintained in the values variable, irrespective of which promise was first resolved.
