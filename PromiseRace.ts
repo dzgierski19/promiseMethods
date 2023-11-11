@@ -1,12 +1,11 @@
-import { PROMISEARRAY, isArrayEmpty } from "./Global";
+import { PROMISEARRAY } from "./Global";
 
 // Develop a function promise.race(arrayOfPromises).
 
-const promiseRace = <T>(arrayOfPromises: Promise<T>[]): Promise<T> => {
-  isArrayEmpty(arrayOfPromises);
+const promiseRace = <T>(arrayOfPromises: (() => Promise<T>)[]): Promise<T> => {
   return new Promise((resolve, reject) => {
     arrayOfPromises.forEach((element) => {
-      element
+      element()
         .then((value) => {
           resolve(value);
         })
@@ -17,20 +16,10 @@ const promiseRace = <T>(arrayOfPromises: Promise<T>[]): Promise<T> => {
   });
 };
 
-const promiseRaceResult = promiseRace(PROMISEARRAY);
-console.log(promiseRaceResult);
-
-// async function promiseRaceAsync() {
-//   const result = await promiseRace(PROMISEARRAY);
-//   return result;
-// }
-
-// const b = promiseRaceAsync();
-
-const a = Promise.race(PROMISEARRAY);
-
-setTimeout(() => {
-  promiseRaceResult.then((data) => {
-    console.log(data);
+promiseRace(PROMISEARRAY)
+  .then((result) => {
+    console.log(result);
+  })
+  .catch((e) => {
+    console.log(e);
   });
-}, 6000);
