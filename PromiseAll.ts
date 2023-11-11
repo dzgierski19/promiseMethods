@@ -1,11 +1,10 @@
-import { PROMISEARRAY, isArrayEmpty } from "./Global";
+import { PROMISEARRAY } from "./Global";
 
 // Develop a function promise.all(arrayOfPromises).
 
 //PROMISES
 
 const promiseAll = <T>(arrayOfPromises: (() => Promise<T>)[]): Promise<T[]> => {
-  // isArrayEmpty(arrayOfPromises);
   return new Promise((resolve, reject) => {
     const arr = [] as T[];
     let counter = 0;
@@ -30,7 +29,6 @@ const promiseAll = <T>(arrayOfPromises: (() => Promise<T>)[]): Promise<T[]> => {
 const promiseAllAsyncAwait = async <T>(
   arrayOfPromises: (() => Promise<T>)[]
 ): Promise<T[]> => {
-  // isArrayEmpty(arrayOfPromises);
   const arr = [] as T[];
   for (const element of arrayOfPromises) {
     try {
@@ -43,10 +41,12 @@ const promiseAllAsyncAwait = async <T>(
   return arr;
 };
 
-promiseAllAsyncAwait(PROMISEARRAY)
+promiseAllAsyncAwait([])
   .then((result) => {
     console.log(result);
   })
   .catch((e) => {
     console.log(e);
   });
+
+//In Promise.all the order of the promises is maintained in the values variable, irrespective of which promise was first resolved.
