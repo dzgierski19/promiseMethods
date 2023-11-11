@@ -1,65 +1,30 @@
-import { PROMISEARRAY, isArrayEmpty } from "./Global";
+import { PROMISEARRAY } from "./Global";
 
 // Develop a function promise.last(arrayOfPromises).
 
-const promiseLast = <T>(arrayOfPromises: Promise<T>[]): Promise<T> => {
-  isArrayEmpty(arrayOfPromises);
+const promiseLast = <T>(arrayOfPromises: (() => Promise<T>)[]): Promise<T> => {
   const arr = [] as T[];
-  // return new Promise((resolve, reject) => {
-  //   arrayOfPromises.forEach((element) => {
-  //     element
-  //       .then((value) => {
-  //         arr.push(value);
-  //         resolve(arr);
-  //       })
-  //       .catch((error) => reject(error));
-  //   });
-  // });
   return new Promise((resolve, reject) => {
     let resolvedPromiseCounter = 0;
-    let promiseCounter = 0;
     for (let i = 0; i < arrayOfPromises.length; i++) {
-      promiseCounter++;
-      arrayOfPromises[i]
+      arrayOfPromises[i]()
         .then((value) => {
           resolvedPromiseCounter++;
-          if (resolvedPromiseCounter === 3) {
+          if (resolvedPromiseCounter === arrayOfPromises.length) {
             resolve(value);
           }
         })
         .catch((error) => {
-          throw error;
+          reject(error);
         });
     }
   });
 };
 
-// const promiseLast = <T>(arrayOfPromises: Promise<T>[]): Promise<T> => {
-//   return promiseAllArr(arrayOfPromises).then((data) => {
-//     if (data.length) {
-//       console.log(data.length);
-//       return data[data.length - 1];
-//     }
-//     throw new Error("array error");
-//   });
-// };
-
-// async function promiseRaceAsync() {
-//   const result = await promiseAllArr(PROMISEARRAY);
-//   const lastItem = result[result.length - 1];
-//   console.log(lastItem);
-//   return lastItem;
-// }
-
-console.time("A");
-const promiseLastResult = promiseLast(PROMISEARRAY);
-console.log(promiseLastResult);
-
-setTimeout(() => {
-  promiseLastResult.then((data) => {
-    console.log(data);
-    console.timeEnd("A");
+promiseLast(PROMISEARRAY)
+  .then((result) => {
+    console.log(result);
+  })
+  .catch((e) => {
+    console.log(e);
   });
-}, 1000);
-
-//In Promise.all the order of the promises is maintained in the values variable, irrespective of which promise was first resolved.
