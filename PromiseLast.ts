@@ -3,7 +3,6 @@ import { PROMISEARRAY } from "./Global";
 // Develop a function promise.last(arrayOfPromises).
 
 const promiseLast = <T>(arrayOfPromises: (() => Promise<T>)[]): Promise<T> => {
-  const arr = [] as T[];
   return new Promise((resolve, reject) => {
     let resolvedPromiseCounter = 0;
     for (let i = 0; i < arrayOfPromises.length; i++) {

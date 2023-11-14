@@ -12,21 +12,17 @@ const promiseAllSettled = <T>(
   arrayOfPromises: (() => Promise<T>)[]
 ): Promise<PromiseType<T>[]> => {
   return new Promise((resolve) => {
-    const arr = [] as PromiseType<T>[];
-    let counter = 0;
+    const arr: PromiseType<T>[] = [];
     arrayOfPromises.forEach((element, index) => {
       element()
         .then((result) => {
-          counter++;
           arr.push({ status: "fulfilled", value: result });
-          if (counter === arrayOfPromises.length) {
-            resolve(arr);
-          }
         })
         .catch((error) => {
-          counter++;
           arr.push({ status: "rejected", reason: error });
-          if (counter === arrayOfPromises.length) {
+        })
+        .finally(() => {
+          if (arr.length === arrayOfPromises.length) {
             resolve(arr);
           }
         });
@@ -37,7 +33,7 @@ const promiseAllSettled = <T>(
 const promiseAllSettledAsyncAwait = async <T>(
   arrayOfPromises: (() => Promise<T>)[]
 ) => {
-  const array = [] as PromiseType<T>[];
+  const array: PromiseType<T>[] = [];
   for (const element of arrayOfPromises) {
     try {
       const result = await element();
@@ -49,7 +45,7 @@ const promiseAllSettledAsyncAwait = async <T>(
   return array;
 };
 
-promiseAllSettledAsyncAwait(PROMISEARRAY)
+promiseAllSettled(PROMISEARRAY)
   .then((result) => {
     console.log(result);
   })

@@ -6,14 +6,12 @@ import { PROMISEARRAY } from "./Global";
 
 const promiseAll = <T>(arrayOfPromises: (() => Promise<T>)[]): Promise<T[]> => {
   return new Promise((resolve, reject) => {
-    const arr = [] as T[];
-    let counter = 0;
+    const arr: T[] = [];
     arrayOfPromises.forEach((element, index) => {
       element()
         .then((value) => {
-          counter++;
           arr[index] = value;
-          if (counter === arrayOfPromises.length) {
+          if (arr.length === arrayOfPromises.length) {
             resolve(arr);
           }
         })
@@ -29,7 +27,7 @@ const promiseAll = <T>(arrayOfPromises: (() => Promise<T>)[]): Promise<T[]> => {
 const promiseAllAsyncAwait = async <T>(
   arrayOfPromises: (() => Promise<T>)[]
 ): Promise<T[]> => {
-  const arr = [] as T[];
+  const arr: T[] = [];
   for (const element of arrayOfPromises) {
     try {
       const transfer = await element();
@@ -41,7 +39,7 @@ const promiseAllAsyncAwait = async <T>(
   return arr;
 };
 
-promiseAllAsyncAwait([])
+promiseAllAsyncAwait(PROMISEARRAY)
   .then((result) => {
     console.log(result);
   })

@@ -7,18 +7,17 @@ const promiseIgnoreErrors = <T>(
 ): Promise<T[]> => {
   return new Promise((resolve, reject) => {
     let promiseCounter = 0;
-    const resultArray = [] as T[];
+    const resultArray: T[] = [];
     arrayOfPromises.forEach((element) => {
       element()
         .then((data) => {
           promiseCounter++;
           resultArray.push(data);
-          if (promiseCounter === arrayOfPromises.length) {
-            resolve(resultArray);
-          }
         })
         .catch(() => {
           promiseCounter++;
+        })
+        .finally(() => {
           if (promiseCounter === arrayOfPromises.length) {
             resolve(resultArray);
           }
@@ -30,7 +29,7 @@ const promiseIgnoreErrors = <T>(
 const promiseIgnoreErrorsAsyncAwait = async <T>(
   arrayOfPromises: (() => Promise<T>)[]
 ): Promise<T[]> => {
-  const resultArray = [] as T[];
+  const resultArray: T[] = [];
   for (const element of arrayOfPromises) {
     try {
       const result = await element();
@@ -40,7 +39,7 @@ const promiseIgnoreErrorsAsyncAwait = async <T>(
   return resultArray;
 };
 
-promiseIgnoreErrorsAsyncAwait(PROMISEARRAY)
+promiseIgnoreErrors(PROMISEARRAY)
   .then((result) => {
     console.log(result);
   })
